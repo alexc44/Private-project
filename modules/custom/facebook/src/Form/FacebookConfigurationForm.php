@@ -56,8 +56,13 @@ class FacebookConfigurationForm extends ConfigFormBase {
      */
     public function submitForm(array &$form, FormStateInterface $form_state) {
         $values = $form_state->getValues();
+
         $this->config('facebook.settings')
-            ->set('your_message', $values['your_message'])
+            ->set('facebook_app_id', $values['facebook_app_id'])
+            ->save();
+
+        $this->config('facebook.settings')
+            ->set('facebook_app_secret', $values['facebook_app_secret'])
             ->save();
     }
 
