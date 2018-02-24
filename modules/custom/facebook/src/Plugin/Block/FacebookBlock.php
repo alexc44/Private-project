@@ -19,7 +19,6 @@ class FacebookBlock extends BlockBase {
      * {@inheritdoc}
      */
     public function build() {
-        $oh = $this->getConfiguration('facebook.settings');
         return array(
             '#markup' => $this->t('Hello, World!'),
         );
