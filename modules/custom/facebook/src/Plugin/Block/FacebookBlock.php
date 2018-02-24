@@ -20,7 +20,13 @@ class FacebookBlock extends BlockBase {
      */
     public function build() {
         return array(
-            '#markup' => $this->t('Hello, World!'),
+            '#theme' => 'facebook_template',
+            '#class' => 'facebook_wrapper',
+            '#attached' => array(
+                'library' => array(
+                    'facebook/facebook-libraries',
+                ),
+            ),
         );
     }
 
