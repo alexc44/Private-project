@@ -1,0 +1,8 @@
+facebook.admin_settings:
+  path: '/admin/config/facebook'
+  defaults:
+    _form: '\Drupal\facebook\Form\FacebookConfigurationForm'
+    _title: 'Facebook configuration screen'
+  requirements:
+    _permission: 'administer site configuration'
+
