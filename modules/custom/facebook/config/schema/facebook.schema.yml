@@ -1,0 +1,10 @@
+facebook.config:
+  type: config_object
+  label: 'Facebook config'
+  mapping:
+    facebook_app_id:
+      type: string
+      label: 'Facebook app id'
+    facebook_app_secret:
+      type: string
+      label: 'Facebook app secret'
