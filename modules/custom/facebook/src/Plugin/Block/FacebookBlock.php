@@ -19,11 +19,14 @@ class FacebookBlock extends BlockBase {
      * {@inheritdoc}
      */
     public function build() {
-
-        $config = $this->getConfiguration();
-
         return array(
-            '#markup' => 'okokok',
+            '#theme' => 'facebook_template',
+            '#class' => 'facebook_wrapper',
+            '#attached' => array(
+                'library' => array(
+                    'facebook/facebook-libraries',
+                ),
+            ),
         );
     }
 
