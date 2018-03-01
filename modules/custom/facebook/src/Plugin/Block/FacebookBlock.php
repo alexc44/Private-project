@@ -10,7 +10,7 @@ use Drupal\Core\Block\BlockBase;
  * @Block(
  *   id = "facebook_block",
  *   admin_label = @Translation("Facebook block"),
- *   category = @Translation("Facebook World"),
+ *   category = @Translation("Facebook block"),
  * )
  */
 class FacebookBlock extends BlockBase {
@@ -19,14 +19,11 @@ class FacebookBlock extends BlockBase {
      * {@inheritdoc}
      */
     public function build() {
+
+        $config = $this->getConfiguration();
+
         return array(
-            '#theme' => 'facebook_template',
-            '#class' => 'facebook_wrapper',
-            '#attached' => array(
-                'library' => array(
-                    'facebook/facebook-libraries',
-                ),
-            ),
+            '#markup' => 'okokok',
         );
     }
 
