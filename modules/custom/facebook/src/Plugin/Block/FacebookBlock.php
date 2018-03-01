@@ -19,14 +19,18 @@ class FacebookBlock extends BlockBase {
      * {@inheritdoc}
      */
     public function build() {
+
+        $config = \Drupal::config('facebook.settings');
+
         return array(
-            '#theme' => 'facebook_template',
+            '#theme' => 'block-facebook',
             '#class' => 'facebook_wrapper',
             '#attached' => array(
                 'library' => array(
                     'facebook/facebook-libraries',
                 ),
             ),
+            '#facebook_conf' => $config,
         );
     }
 
