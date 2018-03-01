@@ -30,12 +30,11 @@ class FacebookConfigurationForm extends ConfigFormBase {
      * {@inheritdoc}
      */
     public function buildForm(array $form, FormStateInterface $form_state) {
-        $config = $this->config('facebook.settings');
+        $config = \Drupal::config('facebook.settings');
 
         $form['facebook_app'] = array(
             '#type' => 'fieldset',
-            '#title' => $this
-                ->t('Facebook app configuration'),
+            '#title' => $this->t('Facebook app configuration'),
         );
         $form['facebook_app']['facebook_app_id'] = array(
             '#type' => 'textfield',
