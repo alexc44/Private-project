@@ -5,4 +5,3 @@ facebook_js:
     dependencies:
       - core/jquery
       - core/drupalSettings
-    header: true

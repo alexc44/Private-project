@@ -5,6 +5,16 @@
  *
  */
 function mytheme_preprocess_html(&$variables) {
-    $variables['attributes']['class'][] = 'facebook-js';
-    $variables['#attached']['library'][] = 'mytheme/facebook_js';
+
+    // Add facebook sdk to body
+    $facebook_id = null;
+    $config = $config = \Drupal::config('facebook.settings');
+
+    if (!empty($config)) {
+        $facebook_id = $config->get('facebook_app_id');
+    }
+
+    if ($facebook_id) {
+        $variables['#attached']['drupalSettings']['facebook']['facebook_app_id'] = $facebook_id;
+    }
 }

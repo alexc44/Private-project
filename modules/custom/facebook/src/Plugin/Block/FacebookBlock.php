@@ -20,8 +20,6 @@ class FacebookBlock extends BlockBase {
      */
     public function build() {
 
-        $config = \Drupal::config('facebook.settings');
-
         return array(
             '#theme' => 'block-facebook',
             '#class' => 'facebook_wrapper',
@@ -30,7 +28,6 @@ class FacebookBlock extends BlockBase {
                     'facebook/facebook-libraries',
                 ),
             ),
-            '#facebook_conf' => $config,
         );
     }
 
