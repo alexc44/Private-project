@@ -6,4 +6,12 @@ facebook.admin:
   requirements:
     _permission: 'administer site configuration'
 
+facebook.facebook_sdk:
+  path: '/myfacebook'
+  defaults:
+    _controller: '\Drupal\facebook\Controller\FacebookController::facebookPage'
+    _title: 'Facebook'
+  requirements:
+    _permission: 'access content'
+
 
