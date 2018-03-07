@@ -54,7 +54,7 @@
                 const appId = drupalSettings.facebook.facebook_app_id;
                 if (appId) {
                     FB.init({
-                        appId: '184014295543749',
+                        appId: appId,
                         cookie: true,
                         version: 'v2.2'
                     });

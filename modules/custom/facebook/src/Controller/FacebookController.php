@@ -42,10 +42,10 @@ class FacebookController {
             exit;
         }
 
-        if (! isset($accessToken)) {
+        /*if (! isset($accessToken)) {
             echo 'No cookie set or no OAuth data could be obtained from cookie.';
             exit;
-        }
+        }*/
 
         /*$tempstore = \Drupal::service('user.private_tempstore')->get('facebook');
         $tempstore->set('access_token', (string) $accessToken);*/
