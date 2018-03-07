@@ -30,7 +30,7 @@ class FacebookController {
 
         $helper = $fb->getJavaScriptHelper();
 
-        /*try {
+        try {
             $accessToken = $helper->getAccessToken();
         } catch(Facebook\Exceptions\FacebookResponseException $e) {
             // When Graph returns an error
@@ -46,10 +46,6 @@ class FacebookController {
             echo 'No cookie set or no OAuth data could be obtained from cookie.';
             exit;
         }
-
-        // Logged in
-        echo '<h3>Access Token</h3>';
-        var_dump($accessToken->getValue());*/
 
         /*$tempstore = \Drupal::service('user.private_tempstore')->get('facebook');
         $tempstore->set('access_token', (string) $accessToken);*/
