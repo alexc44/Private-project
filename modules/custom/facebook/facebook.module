@@ -2,10 +2,12 @@
 
 function facebook_theme($existing, $type, $theme, $path)
 {
-
     return [
         'block-facebook' => [
-            'variables' => ['class' => NULL]
+            'variables' => [
+                'class' => NULL,
+                'facebook_conf' => NULL,
+            ]
         ],
     ];
 }

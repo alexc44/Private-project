@@ -18,6 +18,7 @@ description: 'A flexible, recolorable theme with many regions and a responsive, 
 package: Core
 # version: VERSION
 # core: 8.x
+
 regions:
   header: Header
   primary_menu: 'Primary menu'

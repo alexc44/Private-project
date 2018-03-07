@@ -5,9 +5,16 @@
  *
  */
 function mytheme_preprocess_html(&$variables) {
-    if ($node = \Drupal::request()->attributes->get('node')) {
-        $variables['attributes']['class'][] = 'page-node-' . $node->id();
+
+    // Add facebook sdk to body
+    $facebook_id = null;
+    $config = $config = \Drupal::config('facebook.settings');
+
+    if (!empty($config)) {
+        $facebook_id = $config->get('facebook_app_id');
     }
-    $current_path = \Drupal::service('path.current')->getPath();
-    $variables['current_path'] = \Drupal::service('path.alias_manager')->getAliasByPath($current_path);
+
+    if ($facebook_id) {
+        $variables['#attached']['drupalSettings']['facebook']['facebook_app_id'] = $facebook_id;
+    }
 }
