@@ -54,18 +54,17 @@
                 });
             }
 
-            $(document).ready(function () {
+            window.fbAsyncInit = function() {
                 const appId = drupalSettings.facebook.facebook_app_id;
                 if (appId) {
                     FB.init({
-                        appId: appId,
+                        appId: '184014295543749',
                         cookie: true,
                         version: 'v2.2'
                     });
                     checkLoginState();
                 }
-
-            });
+            };
 
             (function (d, s, id) {
                 var js, fjs = d.getElementsByTagName(s)[0];
