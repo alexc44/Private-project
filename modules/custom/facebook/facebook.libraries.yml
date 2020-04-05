@@ -1,7 +1,0 @@
-facebook-libraries:
-  version: 1.x
-  js:
-    js/facebook_sdk.js: {}
-  dependencies:
-      - core/jquery
-      - core/drupalSettings
