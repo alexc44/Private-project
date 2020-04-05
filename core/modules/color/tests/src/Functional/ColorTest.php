@@ -20,6 +20,11 @@ class ColorTest extends BrowserTestBase {
   public static $modules = ['color', 'color_test', 'block', 'file'];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * A user with administrative permissions.
    *
    * @var \Drupal\user\UserInterface
@@ -65,7 +70,7 @@ class ColorTest extends BrowserTestBase {
         'scheme_color' => '#3b3b3b',
       ],
     ];
-    \Drupal::service('theme_handler')->install(array_keys($this->themes));
+    \Drupal::service('theme_installer')->install(array_keys($this->themes));
 
     // Array filled with valid and not valid color values.
     $this->colorTests = [
@@ -141,7 +146,7 @@ class ColorTest extends BrowserTestBase {
     $stylesheets = \Drupal::state()->get('drupal_css_cache_files') ?: [];
     $stylesheet_content = '';
     foreach ($stylesheets as $uri) {
-      $stylesheet_content .= implode("\n", file(drupal_realpath($uri)));
+      $stylesheet_content .= implode("\n", file(\Drupal::service('file_system')->realpath($uri)));
     }
     $this->assertTrue(strpos($stylesheet_content, 'public://') === FALSE, 'Make sure the color paths have been translated to local paths. (' . $theme . ')');
     $config->set('css.preprocess', 0);

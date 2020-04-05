@@ -3,11 +3,10 @@ type: module
 description: 'Test module used to test adding a module during runtime.'
 package: Testing
 # version: VERSION
-# core: 8.x
+core: 8.x
 hidden: true
 
-# Information added by Drupal.org packaging script on 2018-01-03
-version: '8.4.4'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-04-02
+version: '8.8.5'
 project: 'drupal'
-datestamp: 1515021228
+datestamp: 1585861582
