@@ -26,7 +26,11 @@
       var originalClose = settings.dialog.close;
 
       settings.dialog.close = function (event) {
-        originalClose.apply(settings.dialog, arguments);
+        for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
+        }
+
+        originalClose.apply(settings.dialog, [event].concat(args));
         $(event.target).remove();
       };
     },
@@ -34,14 +38,7 @@
       var buttons = [];
       var $buttons = $dialog.find('.form-actions input[type=submit], .form-actions a.button');
       $buttons.each(function () {
-        var $originalButton = $(this).css({
-          display: 'block',
-          width: 0,
-          height: 0,
-          padding: 0,
-          border: 0,
-          overflow: 'hidden'
-        });
+        var $originalButton = $(this).css({ display: 'none' });
         buttons.push({
           text: $originalButton.html() || $originalButton.attr('value'),
           class: $originalButton.attr('class'),

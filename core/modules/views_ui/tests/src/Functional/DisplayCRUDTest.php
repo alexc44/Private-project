@@ -26,6 +26,11 @@ class DisplayCRUDTest extends UITestBase {
   public static $modules = ['contextual'];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Tests adding a display.
    */
   public function testAddDisplay() {
@@ -133,16 +138,26 @@ class DisplayCRUDTest extends UITestBase {
     $view->initDisplay();
 
     $page_2 = $view->displayHandlers->get('page_2');
-    $this->assertTrue($page_2, 'The new page display got saved.');
+    $this->assertNotEmpty($page_2, 'The new page display got saved.');
     $this->assertEqual($page_2->display['display_title'], 'Page');
     $this->assertEqual($page_2->display['display_options']['path'], $path);
     $block_1 = $view->displayHandlers->get('block_1');
-    $this->assertTrue($block_1, 'The new block display got saved.');
+    $this->assertNotEmpty($block_1, 'The new block display got saved.');
     $this->assertEqual($block_1->display['display_plugin'], 'block');
     $this->assertEqual($block_1->display['display_title'], 'Block', 'The new display title got generated as expected.');
     $this->assertFalse(isset($block_1->display['display_options']['path']));
     $this->assertEqual($block_1->getOption('title'), $random_title, 'The overridden title option from the display got copied into the duplicate');
     $this->assertEqual($block_1->getOption('css_class'), $random_css, 'The overridden css_class option from the display got copied into the duplicate');
+
+    // Test duplicating a display after changing the machine name.
+    $view_id = $view->id();
+    $this->drupalPostForm("admin/structure/views/nojs/display/$view_id/page_2/display_id", ['display_id' => 'page_new'], 'Apply');
+    $this->drupalPostForm(NULL, [], 'Duplicate as Block');
+    $this->drupalPostForm(NULL, [], t('Save'));
+    $view = Views::getView($view_id);
+    $view->initDisplay();
+    $this->assertNotNull($view->displayHandlers->get('page_new'), 'The original display is saved with a changed id');
+    $this->assertNotNull($view->displayHandlers->get('block_2'), 'The duplicate display is saved with new id');
   }
 
 }

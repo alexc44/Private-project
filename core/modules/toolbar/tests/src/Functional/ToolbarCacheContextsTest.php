@@ -24,6 +24,11 @@ class ToolbarCacheContextsTest extends BrowserTestBase {
   public static $modules = ['toolbar', 'test_page_test'];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * An authenticated user to use for testing.
    *
    * @var \Drupal\user\UserInterface
@@ -56,6 +61,18 @@ class ToolbarCacheContextsTest extends BrowserTestBase {
 
     $this->adminUser = $this->drupalCreateUser($this->perms);
     $this->adminUser2 = $this->drupalCreateUser($this->perms);
+  }
+
+  /**
+   * Tests toolbar cache integration.
+   */
+  public function testCacheIntegration() {
+    $this->installExtraModules(['dynamic_page_cache']);
+    $this->drupalLogin($this->adminUser);
+    $this->drupalGet('test-page');
+    $this->assertSame('MISS', $this->getSession()->getResponseHeader('X-Drupal-Dynamic-Cache'));
+    $this->drupalGet('test-page');
+    $this->assertSame('HIT', $this->getSession()->getResponseHeader('X-Drupal-Dynamic-Cache'));
   }
 
   /**

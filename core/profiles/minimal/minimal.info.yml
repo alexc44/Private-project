@@ -2,8 +2,8 @@ name: Minimal
 type: profile
 description: 'Build a custom site without pre-configured functionality. Suitable for advanced users.'
 # version: VERSION
-# core: 8.x
-dependencies:
+core: 8.x
+install:
   - node
   - block
   - dblog
@@ -12,8 +12,7 @@ dependencies:
 themes:
   - stark
 
-# Information added by Drupal.org packaging script on 2018-01-03
-version: '8.4.4'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-04-02
+version: '8.8.5'
 project: 'drupal'
-datestamp: 1515021228
+datestamp: 1585861582

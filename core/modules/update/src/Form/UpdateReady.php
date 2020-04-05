@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Configure update settings for this site.
+ *
+ * @internal
  */
 class UpdateReady extends FormBase {
 
@@ -136,7 +138,7 @@ class UpdateReady extends FormBase {
       foreach ($projects as $project => $url) {
         $project_location = $directory . '/' . $project;
         $updater = Updater::factory($project_location, $this->root);
-        $project_real_location = drupal_realpath($project_location);
+        $project_real_location = \Drupal::service('file_system')->realpath($project_location);
         $updates[] = [
           'project' => $project,
           'updater_name' => get_class($updater),
@@ -151,7 +153,7 @@ class UpdateReady extends FormBase {
       // and invoke update_authorize_run_update() directly.
       if (fileowner($project_real_location) == fileowner($this->sitePath)) {
         $this->moduleHandler->loadInclude('update', 'inc', 'update.authorize');
-        $filetransfer = new Local($this->root);
+        $filetransfer = new Local($this->root, \Drupal::service('file_system'));
         $response = update_authorize_run_update($filetransfer, $updates);
         if ($response instanceof Response) {
           $form_state->setResponse($response);

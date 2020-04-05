@@ -5,6 +5,7 @@ namespace Drupal\Tests\Core\Entity;
 use Drupal\Core\Entity\EntityType;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -125,6 +126,18 @@ class EntityTypeTest extends UnitTestCase {
       [['id' => 'id'], ['id' => 'id', 'revision' => '', 'bundle' => '', 'langcode' => '']],
       [['bundle' => 'bundle'], ['bundle' => 'bundle', 'revision' => '', 'langcode' => '']],
     ];
+  }
+
+  /**
+   * Tests the isInternal() method.
+   */
+  public function testIsInternal() {
+    $entity_type = $this->setUpEntityType(['internal' => TRUE]);
+    $this->assertTrue($entity_type->isInternal());
+    $entity_type = $this->setUpEntityType(['internal' => FALSE]);
+    $this->assertFalse($entity_type->isInternal());
+    $entity_type = $this->setUpEntityType([]);
+    $this->assertFalse($entity_type->isInternal());
   }
 
   /**
@@ -259,7 +272,8 @@ class EntityTypeTest extends UnitTestCase {
   public function testIdExceedsMaxLength() {
     $id = $this->randomMachineName(33);
     $message = 'Attempt to create an entity type with an ID longer than 32 characters: ' . $id;
-    $this->setExpectedException('Drupal\Core\Entity\Exception\EntityTypeIdLengthException', $message);
+    $this->expectException('Drupal\Core\Entity\Exception\EntityTypeIdLengthException');
+    $this->expectExceptionMessage($message);
     $this->setUpEntityType(['id' => $id]);
   }
 
@@ -393,6 +407,28 @@ class EntityTypeTest extends UnitTestCase {
   }
 
   /**
+   * Tests the ::getBundleLabel() method.
+   *
+   * @covers ::getBundleLabel
+   * @dataProvider providerTestGetBundleLabel
+   */
+  public function testGetBundleLabel($definition, $expected) {
+    $entity_type = $this->setUpEntityType($definition);
+    $entity_type->setStringTranslation($this->getStringTranslationStub());
+    $this->assertEquals($expected, $entity_type->getBundleLabel());
+  }
+
+  /**
+   * Provides test data for ::testGetBundleLabel().
+   */
+  public function providerTestGetBundleLabel() {
+    return [
+      [['label' => 'Entity Label Foo'], 'Entity Label Foo bundle'],
+      [['bundle_label' => 'Bundle Label Bar'], 'Bundle Label Bar'],
+    ];
+  }
+
+  /**
    * Gets a mock controller class name.
    *
    * @return string
@@ -407,7 +443,7 @@ class EntityTypeTest extends UnitTestCase {
    */
   public function testSetLinkTemplateWithInvalidPath() {
     $entity_type = $this->setUpEntityType(['id' => $this->randomMachineName()]);
-    $this->setExpectedException(\InvalidArgumentException::class);
+    $this->expectException(\InvalidArgumentException::class);
     $entity_type->setLinkTemplate('test', 'invalid-path');
   }
 
@@ -440,6 +476,67 @@ class EntityTypeTest extends UnitTestCase {
   protected function assertNoPublicProperties(EntityTypeInterface $entity_type) {
     $reflection = new \ReflectionObject($entity_type);
     $this->assertEmpty($reflection->getProperties(\ReflectionProperty::IS_PUBLIC));
+  }
+
+  /**
+   * Tests that the EntityType object can be serialized.
+   */
+  public function testIsSerializable() {
+    $entity_type = $this->setUpEntityType([]);
+
+    $translation = $this->prophesize(TranslationInterface::class);
+    $translation->willImplement(\Serializable::class);
+    $translation->serialize()->willThrow(\Exception::class);
+    $translation_service = $translation->reveal();
+    $translation_service->_serviceId = 'string_translation';
+
+    $entity_type->setStringTranslation($translation_service);
+    $entity_type = unserialize(serialize($entity_type));
+
+    $this->assertEquals('example_entity_type', $entity_type->id());
+  }
+
+  /**
+   * @covers ::getLabelCallback
+   *
+   * @group legacy
+   *
+   * @deprecatedMessage EntityType::getLabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794
+   */
+  public function testGetLabelCallack() {
+    $entity_type = $this->setUpEntityType(['label_callback' => 'label_function']);
+    $this->assertSame('label_function', $entity_type->getLabelCallback());
+
+    $entity_type = $this->setUpEntityType([]);
+    $this->assertNull($entity_type->getLabelCallback());
+  }
+
+  /**
+   * @covers ::setLabelCallback
+   *
+   * @group legacy
+   *
+   * @deprecatedMessage EntityType::setLabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794
+   */
+  public function testSetLabelCallack() {
+    $entity_type = $this->setUpEntityType([]);
+    $entity_type->setLabelCallback('label_function');
+    $this->assertSame('label_function', $entity_type->get('label_callback'));
+  }
+
+  /**
+   * @covers ::hasLabelCallback
+   *
+   * @group legacy
+   *
+   * @deprecatedMessage EntityType::hasLabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794
+   */
+  public function testHasLabelCallack() {
+    $entity_type = $this->setUpEntityType(['label_callback' => 'label_function']);
+    $this->assertTrue($entity_type->hasLabelCallback());
+
+    $entity_type = $this->setUpEntityType([]);
+    $this->assertFalse($entity_type->hasLabelCallback());
   }
 
 }

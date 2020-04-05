@@ -24,7 +24,7 @@ interface ConditionAggregateInterface extends \Countable {
    * @param string $operator
    * @param string $langcode
    *
-   * @return \Drupal\Core\Entity\Query\ConditionAggregateInterface
+   * @return $this
    *   The called object.
    * @see \Drupal\Core\Entity\Query\QueryInterface::condition()
    */
@@ -45,7 +45,7 @@ interface ConditionAggregateInterface extends \Countable {
    *
    * @param string $field
    * @return ConditionInterface
-   * @see \Drupal\Core\Entity\Query\QueryInterface::notexists()
+   * @see \Drupal\Core\Entity\Query\QueryInterface::notExists()
    */
   public function notExists($field, $function, $langcode = NULL);
 

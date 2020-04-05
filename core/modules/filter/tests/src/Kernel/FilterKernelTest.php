@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\filter\Kernel;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Render\RenderContext;
@@ -195,7 +196,7 @@ class FilterKernelTest extends KernelTestBase {
         'allowed_html' => '<img src data-align data-caption>',
         'filter_html_help' => 1,
         'filter_html_nofollow' => 0,
-      ]
+      ],
     ]);
     $test_with_html_filter = function ($input) use ($filter, $html_filter, $renderer) {
       return $renderer->executeInRenderContext(new RenderContext(), function () use ($input, $filter, $html_filter) {
@@ -375,6 +376,10 @@ class FilterKernelTest extends KernelTestBase {
       "<iframe>aaa</iframe>\n\n" => [
         "<p><iframe>aaa</iframe></p>" => FALSE,
       ],
+      // Bug 3097338, paragraphs were appearing around drupalmedia tags.
+      '<drupal-media data-caption=" " data-entity-type="media" data-entity-uuid="dbb16f97-cd11-4357-acde-cd09e19e312b"></drupal-media>' => [
+        '<p><drupal-media data-caption=" " data-entity-type="media" data-entity-uuid="dbb16f97-cd11-4357-acde-cd09e19e312b"></drupal-media></p>' => FALSE,
+      ],
     ];
     $this->assertFilteredString($filter, $tests);
 
@@ -387,7 +392,6 @@ class FilterKernelTest extends KernelTestBase {
       $this->verbose("\n" . $source . "\n<hr />\n" . $result);
     }
   }
-
 
   /**
    * Tests filter settings, defaults, access restrictions and similar.
@@ -411,7 +415,7 @@ class FilterKernelTest extends KernelTestBase {
         'allowed_html' => '<a> <p> <em> <strong> <cite> <blockquote> <code> <ul> <ol> <li> <dl> <dt> <dd> <br>',
         'filter_html_help' => 1,
         'filter_html_nofollow' => 0,
-      ]
+      ],
     ]);
 
     // HTML filter is not able to secure some tags, these should never be
@@ -466,7 +470,7 @@ class FilterKernelTest extends KernelTestBase {
         'allowed_html' => '<a href llama> <em> <strong> <cite> <blockquote> <code> <ul> <ol> <li> <dl> <dt> <dd> <br>',
         'filter_html_help' => 1,
         'filter_html_nofollow' => 0,
-      ]
+      ],
     ]);
     $f = (string) $filter->process('<a kitten="cute" llama="awesome">link</a>', Language::LANGCODE_NOT_SPECIFIED);
     $this->assertNormalized($f, '<a llama="awesome">link</a>', 'HTML filter keeps explicitly allowed attributes, and removes attributes that are not explicitly allowed.');
@@ -478,7 +482,7 @@ class FilterKernelTest extends KernelTestBase {
         'allowed_html' => '<a href llama="majestical epic"> <em> <strong> <cite> <blockquote> <code> <ul> <ol> <li> <dl> <dt> <dd> <br>',
         'filter_html_help' => 1,
         'filter_html_nofollow' => 0,
-      ]
+      ],
     ]);
     $f = (string) $filter->process('<a kitten="cute" llama="awesome">link</a>', Language::LANGCODE_NOT_SPECIFIED);
     $this->assertIdentical($f, '<a>link</a>', 'HTML filter removes allowed attributes that do not have an explicitly allowed value.');
@@ -501,7 +505,7 @@ class FilterKernelTest extends KernelTestBase {
         'allowed_html' => '<a href>',
         'filter_html_help' => 1,
         'filter_html_nofollow' => 1,
-      ]
+      ],
     ]);
 
     // Test if the rel="nofollow" attribute is added, even if we try to prevent
@@ -549,7 +553,7 @@ class FilterKernelTest extends KernelTestBase {
     $filter->setConfiguration([
       'settings' => [
         'filter_url_length' => 496,
-      ]
+      ],
     ]);
 
     // @todo Possible categories:
@@ -842,7 +846,7 @@ www.example.com with a newline in comments -->
     $filter->setConfiguration([
       'settings' => [
         'filter_url_length' => 20,
-      ]
+      ],
     ]);
     $tests = [
       'www.trimmed.com/d/ff.ext?a=1&b=2#a1' => [
@@ -877,14 +881,14 @@ www.example.com with a newline in comments -->
       foreach ($tasks as $value => $is_expected) {
         // Not using assertIdentical, since combination with strpos() is hard to grok.
         if ($is_expected) {
-          $success = $this->assertTrue(strpos($result, $value) !== FALSE, format_string('@source: @value found. Filtered result: @result.', [
+          $success = $this->assertTrue(strpos($result, $value) !== FALSE, new FormattableMarkup('@source: @value found. Filtered result: @result.', [
             '@source' => var_export($source, TRUE),
             '@value' => var_export($value, TRUE),
             '@result' => var_export($result, TRUE),
           ]));
         }
         else {
-          $success = $this->assertTrue(strpos($result, $value) === FALSE, format_string('@source: @value not found. Filtered result: @result.', [
+          $success = $this->assertTrue(strpos($result, $value) === FALSE, new FormattableMarkup('@source: @value not found. Filtered result: @result.', [
             '@source' => var_export($source, TRUE),
             '@value' => var_export($value, TRUE),
             '@result' => var_export($result, TRUE),
@@ -924,7 +928,7 @@ www.example.com with a newline in comments -->
     $filter->setConfiguration([
       'settings' => [
         'filter_url_length' => 496,
-      ]
+      ],
     ]);
     $path = __DIR__ . '/../..';
 
@@ -1067,7 +1071,7 @@ body {color:red}
 
 /*--><!]]>*/
 </style></p>',
-      format_string('HTML corrector -- Existing cdata section @pattern_name properly escaped', ['@pattern_name' => '/*<![CDATA[*/'])
+      new FormattableMarkup('HTML corrector -- Existing cdata section @pattern_name properly escaped', ['@pattern_name' => '/*<![CDATA[*/'])
     );
 
     $filtered_data = Html::normalize('<p><style>
@@ -1086,7 +1090,7 @@ body {color:red}
 
 /*--><!]]>*/
 </style></p>',
-      format_string('HTML corrector -- Existing cdata section @pattern_name properly escaped', ['@pattern_name' => '<!--/*--><![CDATA[/* ><!--*/'])
+      new FormattableMarkup('HTML corrector -- Existing cdata section @pattern_name properly escaped', ['@pattern_name' => '<!--/*--><![CDATA[/* ><!--*/'])
     );
 
     $filtered_data = Html::normalize('<p><script>
@@ -1103,7 +1107,7 @@ body {color:red}
 
 //--><!]]>
 </script></p>',
-      format_string('HTML corrector -- Existing cdata section @pattern_name properly escaped', ['@pattern_name' => '<!--//--><![CDATA[// ><!--'])
+      new FormattableMarkup('HTML corrector -- Existing cdata section @pattern_name properly escaped', ['@pattern_name' => '<!--//--><![CDATA[// ><!--'])
     );
 
     $filtered_data = Html::normalize('<p><script>
@@ -1120,7 +1124,7 @@ body {color:red}
 
 //--><!]]>
 </script></p>',
-      format_string('HTML corrector -- Existing cdata section @pattern_name properly escaped', ['@pattern_name' => '// <![CDATA['])
+      new FormattableMarkup('HTML corrector -- Existing cdata section @pattern_name properly escaped', ['@pattern_name' => '// <![CDATA['])
     );
 
   }

@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\node\Functional;
 
-use Drupal\Component\Utility\Crypt;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\system\Entity\Action;
 
@@ -21,6 +20,11 @@ class NodeActionsConfigurationTest extends BrowserTestBase {
   public static $modules = ['action', 'node'];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Tests configuration of the node_assign_owner_action action.
    */
   public function testAssignOwnerNodeActionConfiguration() {
@@ -30,7 +34,7 @@ class NodeActionsConfigurationTest extends BrowserTestBase {
 
     // Make a POST request to admin/config/system/actions.
     $edit = [];
-    $edit['action'] = Crypt::hashBase64('node_assign_owner_action');
+    $edit['action'] = 'node_assign_owner_action';
     $this->drupalPostForm('admin/config/system/actions', $edit, t('Create'));
     $this->assertResponse(200);
 
@@ -40,8 +44,10 @@ class NodeActionsConfigurationTest extends BrowserTestBase {
     $edit['label'] = $action_label;
     $edit['id'] = strtolower($action_label);
     $edit['owner_uid'] = $user->id();
-    $this->drupalPostForm('admin/config/system/actions/add/' . Crypt::hashBase64('node_assign_owner_action'), $edit, t('Save'));
+    $this->drupalPostForm('admin/config/system/actions/add/node_assign_owner_action', $edit, t('Save'));
     $this->assertResponse(200);
+
+    $action_id = $edit['id'];
 
     // Make sure that the new action was saved properly.
     $this->assertText(t('The action has been successfully saved.'), 'The node_assign_owner_action action has been successfully saved.');
@@ -49,8 +55,6 @@ class NodeActionsConfigurationTest extends BrowserTestBase {
 
     // Make another POST request to the action edit page.
     $this->clickLink(t('Configure'));
-    preg_match('|admin/config/system/actions/configure/(.+)|', $this->getUrl(), $matches);
-    $aid = $matches[1];
     $edit = [];
     $new_action_label = $this->randomMachineName();
     $edit['label'] = $new_action_label;
@@ -68,7 +72,7 @@ class NodeActionsConfigurationTest extends BrowserTestBase {
     $this->clickLink(t('Delete'));
     $this->assertResponse(200);
     $edit = [];
-    $this->drupalPostForm("admin/config/system/actions/configure/$aid/delete", $edit, t('Delete'));
+    $this->drupalPostForm(NULL, $edit, t('Delete'));
     $this->assertResponse(200);
 
     // Make sure that the action was actually deleted.
@@ -77,8 +81,8 @@ class NodeActionsConfigurationTest extends BrowserTestBase {
     $this->assertResponse(200);
     $this->assertNoText($new_action_label, 'The label for the node_assign_owner_action action does not appear on the actions administration page after deleting.');
 
-    $action = Action::load($aid);
-    $this->assertFalse($action, 'The node_assign_owner_action action is not available after being deleted.');
+    $action = Action::load($action_id);
+    $this->assertNull($action, 'The node_assign_owner_action action is not available after being deleted.');
   }
 
 }
